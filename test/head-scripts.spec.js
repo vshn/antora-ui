@@ -16,23 +16,35 @@ function render (partial, model) {
   return hbs.compile(source)(model)
 }
 
-const gaTag = (html) => html.match(/googletagmanager\.com\/gtag\/js\?id=([^"]+)/)
-
 test.describe('head-scripts', () => {
-  test('loads Google Analytics for a GA4 measurement ID', () => {
-    const html = render('head-scripts', { site: { keys: { googleAnalytics: 'G-FWQPMNS0R2' } }, uiRootPath: '_' })
-    expect(gaTag(html)[1]).toBe('G-FWQPMNS0R2')
-    expect(html).toContain("gtag('config','G-FWQPMNS0R2')")
+  // Google Analytics sets cookies and sends visitor data to a third party, which needs consent.
+  // None of these sites asks for it, so the UI does not load it at all, whatever a playbook says.
+  test('loads no Google Analytics, even where a site still configures a key', () => {
+    for (const key of ['G-FWQPMNS0R2', 'UA-54393406-8']) {
+      const html = render('head-scripts', { site: { keys: { googleAnalytics: key } }, uiRootPath: '_' })
+      expect(html).not.toContain('googletagmanager')
+      expect(html).not.toContain('gtag(')
+      expect(html).not.toContain(key)
+    }
   })
 
-  test('leaves out a Universal Analytics ID, which Google no longer processes', () => {
-    const html = render('head-scripts', { site: { keys: { googleAnalytics: 'UA-54393406-8' } }, uiRootPath: '_' })
-    expect(gaTag(html)).toBeNull()
-    expect(html).not.toContain('gtag(')
+  test('loads Plausible from the site\'s own domain', () => {
+    const html = render('head-scripts', { site: { keys: { plausibleScript: 'script.js' } }, uiRootPath: '_' })
+    expect(html).toContain('<script async src="/js/script.js"></script>')
+    expect(html).toContain("plausible.init({endpoint:'/api/event'})")
+    // the point of proxying it: no request leaves for plausible.io, so there is nothing to block
+    expect(html).not.toContain('plausible.io')
   })
 
-  test('loads nothing without a Google Analytics key', () => {
+  test('loads no analytics at all without a key', () => {
     const html = render('head-scripts', { site: { keys: {} }, uiRootPath: '_' })
     expect(html).not.toContain('googletagmanager')
+    expect(html).not.toContain('plausible')
+  })
+
+  test('passes the UI root path and the search page to the scripts', () => {
+    const html = render('head-scripts', { site: { keys: { searchPagePath: 'sitesearch.html' } }, uiRootPath: '../_' })
+    expect(html).toContain("var uiRootPath = '../_'")
+    expect(html).toContain("var searchPagePath = 'sitesearch.html'")
   })
 })
