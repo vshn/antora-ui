@@ -13,6 +13,13 @@
       "bundle": "ui-bundle-appuio.zip",
       "logo": "img/appuio.svg",
       "navbarBackground": "rgb(21, 176, 191)"
+    },
+    {
+      "name": "k8up",
+      "title": "K8up",
+      "bundle": "ui-bundle-k8up.zip",
+      "logo": "img/k8up.svg",
+      "navbarBackground": "rgb(201, 182, 190)"
     }
   ]
 }
