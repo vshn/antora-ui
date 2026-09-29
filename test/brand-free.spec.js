@@ -47,4 +47,41 @@ test.describe('the shared UI carries no brand', () => {
     }
     expect(missing).toEqual([])
   })
+
+  // A slot a brand forgets is not an error anywhere: PostCSS leaves the var() in place and the browser
+  // discards the declaration, so the page renders with a default and no other test notices.
+  test('every brand declares the same color slots, and they are the ones src reads', () => {
+    const brands = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'brands.json'), 'utf8')).brands
+    const slotsByBrand = {}
+    for (const { name } of brands) {
+      const css = fs.readFileSync(path.join(__dirname, '..', 'brands', name, 'css', 'tokens.css'), 'utf8')
+      const declared = new Set([...css.matchAll(/(--[A-Za-z0-9_-]+)\s*:/g)].map((m) => m[1]))
+      slotsByBrand[name] = new Set([...declared].filter((it) => !it.startsWith(`--${name}-`)))
+    }
+    const union = new Set(Object.values(slotsByBrand).flatMap((set) => [...set]))
+    const problems = []
+    for (const [name, set] of Object.entries(slotsByBrand)) {
+      const missing = [...union].filter((it) => !set.has(it)).sort()
+      if (missing.length) problems.push(`${name} is missing ${missing.join(', ')}`)
+    }
+    expect(problems, 'brands disagree on their color slots').toEqual([])
+
+    const read = new Set()
+    const written = new Set()
+    for (const file of walk(SRC).filter((it) => it.endsWith('.css'))) {
+      if (path.relative(SRC, file).startsWith(path.join('js', 'vendor'))) continue
+      const css = fs.readFileSync(file, 'utf8')
+      for (const m of css.matchAll(/var\(\s*(--[A-Za-z0-9_-]+)/g)) read.add(m[1])
+      for (const m of css.matchAll(/(--[A-Za-z0-9_-]+)\s*:/g)) written.add(m[1])
+    }
+    const suppliedByBrand = [...read].filter((it) => !written.has(it)).sort()
+    const shared = [...union].sort()
+    expect({
+      'read by src but declared by no brand': suppliedByBrand.filter((it) => !union.has(it)),
+      'declared by every brand but never read by src': shared.filter((it) => !suppliedByBrand.includes(it)),
+    }).toEqual({
+      'read by src but declared by no brand': [],
+      'declared by every brand but never read by src': [],
+    })
+  })
 })

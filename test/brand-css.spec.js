@@ -25,7 +25,11 @@ test.describe(`packaged CSS for ${BRAND}`, () => {
     const hex = '#' + brand.navbarBackground.match(/\d+/g)
       .map((n) => Number(n).toString(16).padStart(2, '0')).join('')
     expect(css.toLowerCase()).toContain(hex)
-    for (const token of ['--navbar-background', '--accent-color', '--link-font-color', '--panel-background']) {
+    const tokens = fs.readFileSync(path.join(ROOT, 'brands', BRAND, 'css', 'tokens.css'), 'utf8')
+    const slots = [...new Set([...tokens.matchAll(/(--[A-Za-z0-9_-]+)\s*:/g)].map((m) => m[1]))]
+      .filter((it) => !it.startsWith(`--${BRAND}-`))
+    expect(slots.length, 'no color slots found in tokens.css').toBeGreaterThan(0)
+    for (const token of slots) {
       expect(css, `${token} was left unresolved`).not.toContain(`var(${token})`)
     }
   })
