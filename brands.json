@@ -20,6 +20,13 @@
       "bundle": "ui-bundle-k8up.zip",
       "logo": "img/k8up.svg",
       "navbarBackground": "rgb(201, 182, 190)"
+    },
+    {
+      "name": "syn",
+      "title": "Project Syn",
+      "bundle": "ui-bundle-syn.zip",
+      "logo": "img/projectsyn.svg",
+      "navbarBackground": "rgb(26, 30, 84)"
     }
   ]
 }

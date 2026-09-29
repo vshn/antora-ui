@@ -1,0 +1,33 @@
+:root {
+  /* Project Syn palette */
+  --syn-purple: #1a1e54;
+  --syn-red: #ab3643;
+  --syn-yellow: #ffbf00;
+  --syn-light-blue: #a1e0e9;
+  --syn-rich-black: #000d1a;
+  --syn-roman-silver: #818898;
+  --syn-silver-sand: #b9bfc6;
+  --syn-ghost-white: #e9ebf2;
+  --syn-cultured: #f6f7f9;
+
+  /* the color slots the shared stylesheets read */
+  --accent-color: var(--syn-red);
+  --mark-background: var(--syn-yellow);
+  --body-font-color: var(--syn-rich-black);
+  --panel-background: var(--syn-cultured);
+  --panel-border-color: var(--syn-silver-sand);
+  --scrollbar-thumb-color: var(--syn-silver-sand);
+  --navbar-background: var(--syn-purple);
+  --navbar-font-color: var(--syn-light-blue);
+  --navbar_hover-background: var(--syn-yellow);
+  --navbar-menu-background: var(--syn-purple);
+  --navbar-menu-font-color: var(--syn-light-blue);
+  --navbar-menu_hover-background: var(--syn-yellow);
+  --link-font-color: var(--syn-red);
+  --link_hover-font-color: var(--syn-light-blue);
+  --admonition-background: var(--syn-ghost-white);
+  --sidebar-background: var(--syn-ghost-white);
+  --footer-background: var(--syn-cultured);
+  --footer-font-color: var(--syn-roman-silver);
+  --footer-link-font-color: var(--syn-red);
+}
