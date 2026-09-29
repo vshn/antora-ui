@@ -18,8 +18,6 @@ function walk (dir) {
 
 test.describe('the shared UI carries no brand', () => {
   test('no stylesheet in src/css names a brand', () => {
-    // passes once Task 2 moves the palette into brands/vshn
-    test.fixme()
     const offenders = []
     for (const file of walk(path.join(SRC, 'css'))) {
       const rel = path.relative(SRC, file)

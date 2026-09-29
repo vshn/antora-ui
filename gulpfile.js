@@ -5,8 +5,10 @@ const createTask = require('./gulp.d/lib/create-task')
 const exportTasks = require('./gulp.d/lib/export-tasks')
 const log = require('fancy-log')
 
-const bundleName = 'ui'
+const brand = require('./gulp.d/lib/brand').selected()
+log(`Brand: ${brand.name} (${brand.title}) -> ${brand.bundle}`)
 const buildDir = 'build'
+const stagingDir = `${buildDir}/staging`
 const previewSrcDir = 'preview-src'
 const previewDestDir = 'public'
 const srcDir = 'src'
@@ -16,8 +18,8 @@ const serverConfig = { host: '0.0.0.0', port: 5252, livereload }
 
 const task = require('./gulp.d/tasks')
 const glob = {
-  all: [srcDir, previewSrcDir],
-  css: `${srcDir}/css/**/*.css`,
+  all: [srcDir, 'brands', previewSrcDir],
+  css: [`${srcDir}/css/**/*.css`, 'brands/*/css/*.css'],
   js: ['.'], // ESLint picks the files and ignores from eslint.config.js
 }
 
@@ -51,10 +53,16 @@ const formatTask = createTask({
   call: task.format(glob.js),
 })
 
+const stageTask = createTask({
+  name: 'build:stage',
+  desc: 'Copy the shared UI and the selected brand into one tree to compile',
+  call: task.stage(srcDir, brand.dir, stagingDir),
+})
+
 const buildAssetsTask = createTask({
   name: 'build:assets',
   call: task.build(
-    srcDir,
+    stagingDir,
     destDir,
     process.argv.slice(2).some((name) => name.startsWith('preview'))
   ),
@@ -68,7 +76,7 @@ const fingerprintTask = createTask({
 const buildTask = createTask({
   name: 'build',
   desc: 'Build and stage the UI assets for bundling',
-  call: series(buildAssetsTask, fingerprintTask),
+  call: series(stageTask, buildAssetsTask, fingerprintTask),
 })
 
 const bundleBuildTask = createTask({
@@ -82,7 +90,7 @@ const bundlePackTask = createTask({
   call: task.pack(
     destDir,
     buildDir,
-    bundleName,
+    brand.bundle,
     (bundlePath) => !process.env.CI && log(`Antora option: --ui-bundle-url=${bundlePath}`)
   ),
 })

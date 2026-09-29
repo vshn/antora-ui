@@ -1,0 +1,11 @@
+{
+  "brands": [
+    {
+      "name": "vshn",
+      "title": "VSHN",
+      "bundle": "ui-bundle.zip",
+      "logo": "img/vshn.svg",
+      "navbarBackground": "rgb(246, 247, 249)"
+    }
+  ]
+}

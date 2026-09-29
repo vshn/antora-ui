@@ -11,8 +11,8 @@ const { Transform } = require('stream')
 // entry of 64 KiB or more, such as the Font Awesome font, so Antora exits without output.
 const ALREADY_COMPRESSED = /\.(woff2?|png|jpe?g|gif|ico)$/
 
-module.exports = (src, dest, bundleName, onFinish) => () => {
-  const bundlePath = path.join(dest, `${bundleName}-bundle.zip`)
+module.exports = (src, dest, bundleFileName, onFinish) => () => {
+  const bundlePath = path.join(dest, bundleFileName)
   const zip = new yazl.ZipFile()
   return new Promise((resolve, reject) => {
     fs.ensureDirSync(dest)

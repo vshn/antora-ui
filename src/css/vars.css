@@ -1,64 +1,21 @@
 :root {
-  /* colors */
-  --color-white: #fff;
-  --color-smoke-10: #fefefe;
-  --color-smoke-30: #fafafa;
-  --color-smoke-50: #f5f5f5;
-  --color-smoke-70: #f0f0f0;
-  --color-smoke-90: #e1e1e1;
-  --color-gray-10: #c1c1c1;
-  --color-gray-30: #8e8e8e;
-  --color-gray-50: #808080;
-  --color-gray-70: #5d5d5d;
-  --color-jet-20: #4a4a4a;
-  --color-jet-30: #424242;
-  --color-jet-50: #333;
-  --color-jet-70: #222;
-  --color-jet-80: #191919;
-  --color-black: #000;
-  /* VSHN Colors */
-  --vshn-rich-black: #000d1a;
-  --vshn-amber: #ffbf00;
-  --vshn-capri: #4cc3ff;
-  --vshn-light-periwinkle: #d1d5e0;
-  --vshn-roman-silver: #818898;
-  --vshn-silver-sand: #b9bfc6;
-  --vshn-ghost-white: #e9ebf2;
-  --vshn-cultured: #f6f7f9;
-  --vshn-logo-blue: #2d6bb5;
-  --vshn-link-color: var(--vshn-logo-blue);
-  --vshn-link-hover-color: var(--vshn-capri);
-  /* colour slots the shared stylesheets read; a brand supplies the values */
-  --accent-color: var(--vshn-capri);
-  --mark-background: var(--vshn-amber);
-
   /* fonts */
   --rem-base: 18; /* used to compute rem value from desired pixel value (e.g., calc(18 / var(--rem-base) * 1rem) = 18px) */
   --body-font-size: 1.0625em; /* 17px */
   --body-font-size--desktop: 1.125em; /* 18px */
   --body-font-size--print: 0.9375em; /* 15px */
   --body-line-height: 1.15;
-  --body-font-color: var(--vshn-rich-black);
   --body-font-family: "Montserrat", sans-serif;
   --body-font-weight-bold: 900;
   --monospace-font-family: "Ubuntu Mono", monospace;
   --monospace-font-weight-bold: 700;
   /* base */
   --body-background: var(--color-white);
-  --panel-background: var(--vshn-cultured);
-  --panel-border-color: var(--vshn-silver-sand);
-  --scrollbar-thumb-color: var(--vshn-silver-sand);
   /* navbar */
-  --navbar-background: var(--vshn-cultured);
-  --navbar-font-color: var(--vshn-rich-black);
-  --navbar_hover-background: var(--vshn-capri);
   --navbar-button-background: var(--color-white);
   --navbar-button-border-color: var(--panel-border-color);
   --navbar-button-font-color: var(--body-font-color);
   --navbar-menu-border-color: var(--panel-border-color);
-  --navbar-menu-background: var(--vshn-cultured);
-  --navbar-menu-font-color: var(--vshn-rich-black);
-  --navbar-menu_hover-background: var(--vshn-capri);
   /* nav */
   --nav-background: var(--panel-background);
   --nav-border-color: var(--color-gray-10);
@@ -74,17 +31,6 @@
   --toolbar-muted-color: var(--color-gray-30);
   --page-version-menu-background: var(--color-smoke-70);
   --page-version-missing-font-color: var(--color-gray-30);
-  /* admonitions */
-  --caution-color: #a0439c;
-  --caution-on-color: var(--color-white);
-  --important-color: #d32f2f;
-  --important-on-color: var(--color-white);
-  --note-color: #217ee7;
-  --note-on-color: var(--color-white);
-  --tip-color: #41af46;
-  --tip-on-color: var(--color-white);
-  --warning-color: #e18114;
-  --warning-on-color: var(--color-white);
   /* doc */
   --doc-font-color: var(--color-jet-50);
   --doc-font-size: inherit;
@@ -96,13 +42,10 @@
   --heading-font-weight: 900;
   --alt-heading-font-weight: var(--body-font-weight-bold);
   --section-divider-color: var(--panel-border-color);
-  --link-font-color: var(--vshn-link-color);
-  --link_hover-font-color: var(--vshn-link-hover-color);
   --link_unresolved-font-color: var(--important-color);
   --abstract-background: var(--color-smoke-70);
   --abstract-font-color: var(--color-jet-20);
   --abstract-border-color: var(--panel-border-color);
-  --admonition-background: var(--vshn-ghost-white);
   --admonition-label-font-weight: var(--body-font-weight-bold);
   --caption-font-color: var(--color-gray-70);
   --caption-font-weight: var(--body-font-weight-bold);
@@ -119,7 +62,6 @@
   --quote-border-color: var(--color-gray-70);
   --quote-font-color: var(--color-gray-70);
   --quote-attribution-font-color: var(--color-gray-30);
-  --sidebar-background: var(--vshn-ghost-white);
   --table-border-color: var(--panel-border-color);
   --table-stripe-background: var(--panel-background);
   --table-footer-background: linear-gradient(to bottom, var(--color-smoke-70) 0%, var(--color-white) 100%);
@@ -130,9 +72,6 @@
   --toc-line-height: 1.2;
   /* footer */
   --footer-line-height: var(--doc-line-height);
-  --footer-background: var(--vshn-cultured);
-  --footer-font-color: var(var(--vshn-roman-silver));
-  --footer-link-font-color: var(--vshn-link-color);
   /* dimensions and positioning */
   --navbar-height: calc(63 / var(--rem-base) * 1rem);
   --toolbar-height: calc(45 / var(--rem-base) * 1rem);

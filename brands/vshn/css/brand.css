@@ -1,0 +1,9 @@
+/* VSHN logo */
+
+.vshn_logo {
+  background: transparent url(../img/vshn.svg) no-repeat center;
+  background-size: contain;
+  width: 60px;
+  height: 40px;
+  margin: 0 10px 0 0;
+}

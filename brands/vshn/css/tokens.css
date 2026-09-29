@@ -1,0 +1,32 @@
+:root {
+  /* VSHN palette */
+  --vshn-rich-black: #000d1a;
+  --vshn-amber: #ffbf00;
+  --vshn-capri: #4cc3ff;
+  --vshn-roman-silver: #818898;
+  --vshn-silver-sand: #b9bfc6;
+  --vshn-ghost-white: #e9ebf2;
+  --vshn-cultured: #f6f7f9;
+  --vshn-logo-blue: #2d6bb5;
+
+  /* the colour slots the shared stylesheets read */
+  --accent-color: var(--vshn-capri);
+  --mark-background: var(--vshn-amber);
+  --body-font-color: var(--vshn-rich-black);
+  --panel-background: var(--vshn-cultured);
+  --panel-border-color: var(--vshn-silver-sand);
+  --scrollbar-thumb-color: var(--vshn-silver-sand);
+  --navbar-background: var(--vshn-cultured);
+  --navbar-font-color: var(--vshn-rich-black);
+  --navbar_hover-background: var(--vshn-capri);
+  --navbar-menu-background: var(--vshn-cultured);
+  --navbar-menu-font-color: var(--vshn-rich-black);
+  --navbar-menu_hover-background: var(--vshn-capri);
+  --link-font-color: var(--vshn-logo-blue);
+  --link_hover-font-color: var(--vshn-capri);
+  --admonition-background: var(--vshn-ghost-white);
+  --sidebar-background: var(--vshn-ghost-white);
+  --footer-background: var(--vshn-cultured);
+  --footer-font-color: var(--vshn-roman-silver);
+  --footer-link-font-color: var(--vshn-logo-blue);
+}
