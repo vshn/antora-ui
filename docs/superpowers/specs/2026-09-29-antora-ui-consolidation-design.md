@@ -193,16 +193,32 @@ a screenshot of the branded page, `/search` answering 404, and `POST /api/event`
 `has_plausible: true` for the three sites in `vshn/landingpager`'s `sites/_external/` registers the
 `Search` and `Search Result Click` goals. Separate repository, does not block.
 
-### Step 3: archive the forks
+### Step 3: archive the forks that are done
 
-`appuio/antora-ui-default`, `k8up-io/antora-ui-default` and `projectsyn/antora-ui-default` each get
-a README note pointing at `vshn/antora-ui` **before** the archive flag, because archived
-repositories are read-only. This is what was done for `vshn/antora-bootstrap`.
+`appuio/antora-ui-default` and `k8up-io/antora-ui-default` each get a README note pointing at
+`vshn/antora-ui` **before** the archive flag, because archived repositories are read-only. This is
+what was done for `vshn/antora-bootstrap`.
+
+`projectsyn/antora-ui-default` stays live: no Project Syn site moves in this rollout, so archiving
+it would strand whatever builds `syn.tools`. Two repositories are archived here, not three.
 
 ### Step 4: what this unlocks
 
 Issue #177 closes: `/search` comes out of the nginx image, `serverSearch` comes out of the UI, and
 `vshn/embedded-search-engine` and `vshn/antora-indexer-cli` are archived.
+
+## Implementation order
+
+This spec is deliberately two implementation plans, not one:
+
+1. **Consolidation, rename and release.** Everything in step 1, ending with a release that publishes
+   four bundles and consumers pinned to `vshn/antora-ui`. Nothing about the three migrating sites
+   changes yet, and the four sites already on the shared bundle keep working throughout.
+2. **The rollout**, written once that release exists, because each site's merge request pins a real
+   version and a real asset name. Steps 2 and 3 belong to it.
+
+Writing one plan for both would mean planning against a release that does not exist, and the second
+half would be rewritten as soon as the first half taught us something.
 
 ## Non-goals and known gaps
 
