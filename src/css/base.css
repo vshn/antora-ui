@@ -28,18 +28,18 @@ body {
 a {
   text-decoration: none;
   font-weight: normal;
-  color: var(--vshn-link-color);
+  color: var(--link-font-color);
 }
 
 a:hover {
   text-decoration: none;
-  color: var(--vshn-link-hover-color);
+  color: var(--link_hover-font-color);
 }
 
 a:active {
   text-decoration: none;
   background-color: none;
-  color: var(--vshn-link-hover-color);
+  color: var(--link_hover-font-color);
 }
 
 a[target=_blank]::after {

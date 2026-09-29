@@ -39,5 +39,5 @@ a + .breadcrumbs {
 
 .breadcrumbs a:hover {
   text-decoration: none;
-  color: var(--vshn-capri);
+  color: var(--accent-color);
 }

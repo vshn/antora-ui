@@ -9,7 +9,7 @@
 }
 
 mark {
-  background-color: var(--vshn-amber);
+  background-color: var(--mark-background);
 }
 
 @media screen and (min-width: 1024px) {
