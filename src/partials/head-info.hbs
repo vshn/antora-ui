@@ -21,7 +21,7 @@
     {{#with (or antoraVersion site.antoraVersion)}}
     <meta name="generator" content="Antora {{this}}">
     {{/with}}
-    {{#with (or page.attributes.image "https://handbook.vshn.ch/_images/2021_LOGO_VSHN_color-notext-square-transparent.png")}}
+    {{#with page.attributes.image}}
     <meta property="og:image" content="{{this}}">
     <link itemprop="image" href="{{this}}">
     <meta name="twitter:image" content="{{this}}">

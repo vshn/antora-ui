@@ -39,4 +39,32 @@ test.describe('the shared UI carries no brand', () => {
     }
     expect(offenders).toEqual([])
   })
+
+  test('no template or image in src names a brand', () => {
+    const offenders = []
+    for (const dir of ['partials', 'layouts', 'img', 'helpers']) {
+      for (const file of walk(path.join(SRC, dir))) {
+        const rel = path.relative(SRC, file)
+        if (BRAND_WORDS.test(rel)) offenders.push(`${rel} (file name)`)
+        if (/\.(png|svg|ico|woff2?)$/.test(file)) continue
+        for (const [i, line] of fs.readFileSync(file, 'utf8').split('\n').entries()) {
+          if (BRAND_WORDS.test(line)) offenders.push(`${rel}:${i + 1}: ${line.trim()}`)
+        }
+      }
+    }
+    expect(offenders).toEqual([])
+  })
+
+  test('every brand fills every slot', () => {
+    const slots = ['brand-logo', 'brand-links', 'brand-footer', 'brand-icons', 'brand-meta']
+    const brands = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'brands.json'), 'utf8')).brands
+    const missing = []
+    for (const { name } of brands) {
+      for (const slot of slots) {
+        const file = path.join(__dirname, '..', 'brands', name, 'partials', `${slot}.hbs`)
+        if (!fs.existsSync(file)) missing.push(`brands/${name}/partials/${slot}.hbs`)
+      }
+    }
+    expect(missing).toEqual([])
+  })
 })
