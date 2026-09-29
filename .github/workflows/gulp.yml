@@ -8,8 +8,32 @@ on:
   pull_request:
 
 jobs:
-  build:
+  brands:
     runs-on: ubuntu-latest
+    outputs:
+      names: ${{ steps.read.outputs.names }}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v7
+
+    # jq is on the runner and a YAML parser is not, which is why the manifest is JSON.
+    # A fifth brand is one directory and one line here, with no change to this workflow.
+    - name: Read the brand manifest
+      id: read
+      run: |
+        # Names reach shell commands, artifact names and GITHUB_ENV in later jobs, so a bad
+        # value stops here, before it can join the matrix.
+        jq -e 'all(.brands[].name; test("^[a-z0-9][a-z0-9_-]*$")) and all(.brands[].bundle; test("^[A-Za-z0-9][A-Za-z0-9._-]*[.]zip$"))' brands.json > /dev/null \
+          || { echo "brands.json holds an invalid brand name or bundle name" >&2; exit 1; }
+        echo "names=$(jq -c '[.brands[].name]' brands.json)" >> "$GITHUB_OUTPUT"
+
+  build:
+    needs: brands
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        brand: ${{ fromJSON(needs.brands.outputs.names) }}
 
     steps:
     - name: Checkout
@@ -24,8 +48,23 @@ jobs:
     - name: Install dependencies
       run: npm ci
 
+    - name: Read this brand's bundle name
+      env:
+        BRAND: ${{ matrix.brand }}
+      run: |
+        case "$BRAND" in
+          *[!a-z0-9_-]*|'') echo "invalid brand name: $BRAND" >&2; exit 1 ;;
+        esac
+        echo "UI_BUNDLE=build/$(jq -r --arg b "$BRAND" '.brands[] | select(.name == $b) | .bundle' brands.json)" >> "$GITHUB_ENV"
+
     - name: Build UI bundle
-      run: npx gulp bundle
+      env:
+        BRAND: ${{ matrix.brand }}
+      run: |
+        case "$BRAND" in
+          *[!a-z0-9_-]*|'') echo "invalid brand name: $BRAND" >&2; exit 1 ;;
+        esac
+        npx gulp bundle --brand="$BRAND"
 
     - name: Build a page with the bundle in the sites' Antora image
       run: sh test/antora-image.sh
@@ -35,28 +74,46 @@ jobs:
 
     - name: Test preview
       run: npm test
+      env:
+        BRAND: ${{ matrix.brand }}
 
     - name: Test the published bundle assets
       run: npm run test:bundle
+      env:
+        BRAND: ${{ matrix.brand }}
 
     - name: Upload test results
       if: failure()
       uses: actions/upload-artifact@v7
       with:
-        name: test-results
+        name: test-results-${{ matrix.brand }}
         path: test-results/
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v7
       with:
-        name: ui-bundle
-        path: build/ui-bundle.zip
+        name: ui-bundle-${{ matrix.brand }}
+        path: ${{ env.UI_BUNDLE }}
+
+  release:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    steps:
+    - name: Collect every brand's bundle
+      uses: actions/download-artifact@v7
+      with:
+        pattern: ui-bundle-*
+        merge-multiple: true
+        path: dist
+
+    - name: List what is about to be released
+      run: ls -l dist
 
     - name: Create Release
-      if: startsWith(github.ref, 'refs/tags/')
       uses: ncipollo/release-action@v1.21.0
       with:
-        artifacts: "build/ui-bundle.zip"
+        artifacts: "dist/*.zip"
         artifactContentType: "application/zip"
         generateReleaseNotes: true
         token: ${{ secrets.GITHUB_TOKEN }}
