@@ -17,39 +17,18 @@ function walk (dir) {
 }
 
 test.describe('the shared UI carries no brand', () => {
-  test('no stylesheet in src/css names a brand', () => {
+  // This is the load-bearing test of the whole consolidation. It fails the day someone adds a VSHN
+  // link to a shared partial, which is how the four forks came about.
+  test('nothing under src names a brand, in its contents or its file name', () => {
     const offenders = []
-    for (const file of walk(path.join(SRC, 'css'))) {
-      const rel = path.relative(SRC, file)
-      if (BRAND_WORDS.test(rel)) offenders.push(`${rel} (file name)`)
-      for (const [i, line] of fs.readFileSync(file, 'utf8').split('\n').entries()) {
-        if (BRAND_WORDS.test(line)) offenders.push(`${rel}:${i + 1}: ${line.trim()}`)
-      }
-    }
-    expect(offenders).toEqual([])
-  })
-
-  test('no script in src/js names a brand', () => {
-    const offenders = []
-    for (const file of walk(path.join(SRC, 'js'))) {
+    for (const file of walk(SRC)) {
       const rel = path.relative(SRC, file)
       // js/vendor is third-party code we bundle, not UI we write
       if (rel.startsWith(path.join('js', 'vendor'))) continue
       if (BRAND_WORDS.test(rel)) offenders.push(`${rel} (file name)`)
-    }
-    expect(offenders).toEqual([])
-  })
-
-  test('no template or image in src names a brand', () => {
-    const offenders = []
-    for (const dir of ['partials', 'layouts', 'img', 'helpers']) {
-      for (const file of walk(path.join(SRC, dir))) {
-        const rel = path.relative(SRC, file)
-        if (BRAND_WORDS.test(rel)) offenders.push(`${rel} (file name)`)
-        if (/\.(png|svg|ico|woff2?)$/.test(file)) continue
-        for (const [i, line] of fs.readFileSync(file, 'utf8').split('\n').entries()) {
-          if (BRAND_WORDS.test(line)) offenders.push(`${rel}:${i + 1}: ${line.trim()}`)
-        }
+      if (/\.(png|ico|jpe?g|gif|woff2?|ttf|eot)$/.test(file)) continue
+      for (const [i, line] of fs.readFileSync(file, 'utf8').split('\n').entries()) {
+        if (BRAND_WORDS.test(line)) offenders.push(`${rel}:${i + 1}: ${line.trim()}`)
       }
     }
     expect(offenders).toEqual([])
@@ -58,6 +37,7 @@ test.describe('the shared UI carries no brand', () => {
   test('every brand fills every slot', () => {
     const slots = ['brand-logo', 'brand-links', 'brand-footer', 'brand-icons', 'brand-meta']
     const brands = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'brands.json'), 'utf8')).brands
+    expect(brands.length, 'brands.json lists no brands').toBeGreaterThan(0)
     const missing = []
     for (const { name } of brands) {
       for (const slot of slots) {
