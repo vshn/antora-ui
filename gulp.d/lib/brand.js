@@ -10,7 +10,7 @@ const brands = () => JSON.parse(fs.readFileSync(ospath.join(ROOT, 'brands.json')
 
 // --brand=appuio on the gulp command line, BRAND=appuio in the environment, otherwise vshn so that
 // a bare `gulp preview` works. CI always passes the brand, and an unknown name fails the build
-// rather than quietly producing a VSHN-coloured bundle under another brand's name.
+// rather than quietly producing a VSHN-colored bundle under another brand's name.
 function selected () {
   const flag = process.argv.find((it) => it.startsWith('--brand='))
   const name = flag ? flag.slice('--brand='.length) : process.env.BRAND || DEFAULT_BRAND

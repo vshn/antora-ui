@@ -9,7 +9,7 @@
   --vshn-cultured: #f6f7f9;
   --vshn-logo-blue: #2d6bb5;
 
-  /* the colour slots the shared stylesheets read */
+  /* the color slots the shared stylesheets read */
   --accent-color: var(--vshn-capri);
   --mark-background: var(--vshn-amber);
   --body-font-color: var(--vshn-rich-black);

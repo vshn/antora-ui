@@ -73,10 +73,17 @@ const fingerprintTask = createTask({
   call: task.fingerprint(destDir),
 })
 
+// Preview builds do not run `clean`, so without this a file deleted from a brand would still be served
+// from the previous build. Only the UI destination goes: the preview pages and search index are rewritten later.
+const cleanDestTask = createTask({
+  name: 'build:clean-dest',
+  call: task.remove([destDir]),
+})
+
 const buildTask = createTask({
   name: 'build',
   desc: 'Build and stage the UI assets for bundling',
-  call: series(stageTask, buildAssetsTask, fingerprintTask),
+  call: series(cleanDestTask, stageTask, buildAssetsTask, fingerprintTask),
 })
 
 const bundleBuildTask = createTask({

@@ -6,6 +6,13 @@
       "bundle": "ui-bundle.zip",
       "logo": "img/vshn.svg",
       "navbarBackground": "rgb(246, 247, 249)"
+    },
+    {
+      "name": "appuio",
+      "title": "APPUiO",
+      "bundle": "ui-bundle-appuio.zip",
+      "logo": "img/appuio.svg",
+      "navbarBackground": "rgb(21, 176, 191)"
     }
   ]
 }

@@ -19,7 +19,7 @@ test.describe(`packaged CSS for ${BRAND}`, () => {
   test.skip(process.env.PREVIEW_ASSETS !== 'bundle', 'needs the packaged assets: run npm run test:bundle')
   test.skip(!fs.existsSync(STAGED), 'no packaged CSS: the preview server did not build')
 
-  test('resolves every colour the brand supplies', () => {
+  test('resolves every color the brand supplies', () => {
     const file = fs.readdirSync(STAGED).find((name) => /^site(-[0-9a-f]{8})?\.css$/.test(name))
     const css = fs.readFileSync(path.join(STAGED, file), 'utf8')
     const hex = '#' + brand.navbarBackground.match(/\d+/g)
