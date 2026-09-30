@@ -57,4 +57,6 @@ That test is the whole consolidation: it fails the day someone adds a VSHN link 
 
 `test/brand.spec.js` checks, for the selected brand, that the logo is served, that the navbar's computed color matches `navbarBackground` in `brands.json`, that every referenced favicon exists, and that every declared `sizes="NxN"` matches the PNG's real pixel dimensions.
 
-`test/bundle.spec.js` fails if one brand's images appear in another brand's zip.
+`test/bundle.spec.js` guards the packaged zip.
+Among other checks, it fails if one brand's images appear in another brand's zip.
+It also checks that no entry is compressed to 64 KiB or more, that already compressed formats are stored rather than compressed again, that fonts and images are valid binaries, that the CSS and JS are fingerprinted and every asset a template references is shipped, and that the Font Awesome font is copied byte for byte.

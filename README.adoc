@@ -22,7 +22,8 @@
 image:{img-ci-status}[CI Status (GitHub Actions), link={url-ci-pipelines}]
 
 This project is an archetype that demonstrates how to produce a UI bundle that can be used by {url-antora}[Antora] to generated a documentation site.
-You can see a preview of the default UI at {url-preview}.
+The built bundles are published on the {url-preview}[releases page].
+Run `npx gulp preview` to see the UI in a local preview on port 5252.
 
 This UI is built for four brands from one source tree.
 Run `npx gulp bundle --brand=<vshn|appuio|k8up|syn>`; see the `Brands` page in `docs/` for what a brand

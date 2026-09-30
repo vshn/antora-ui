@@ -87,8 +87,17 @@ Here's how the files are structured in the UI project:
 [.output]
 ....
 README.adoc
-gulpfile.js/
-  index.js
+brands.json
+brands/
+  vshn/
+    css/
+    img/
+    partials/
+  appuio/
+  k8up/
+  syn/
+gulpfile.js
+gulp.d/
   lib/
   tasks/
 package.json
@@ -123,6 +132,12 @@ preview-src/
   index.html
   ui-model.yml
 ....
+
+`src/` is the shared UI and carries no brand string.
+`brands.json` is the manifest that the build and CI read.
+`brands/` holds one directory per brand, supplying its palette, logo, favicons and five partials.
+The colors, the logo, the navbar links and the footer text therefore live under [.path]_brands/_, not in [.path]_src/_.
+See xref:brands.adoc[] for what a brand owns and how to add one.
 
 A Gulp build is used to compile and assemble the UI project files into a UI bundle.
 

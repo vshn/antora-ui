@@ -2,10 +2,10 @@ name: build & release
 
 on:
   push:
+    # ** is needed because * does not match the / in branch names like feat/name
     branches: [ '**' ]
     tags: [ '*' ]
   # every base branch, so a pull request stacked on another one gets CI too.
-  # ** is needed because * does not match the / in branch names like feat/name
   pull_request:
 
 jobs:

@@ -6,7 +6,9 @@ These "`logic-less`" templates are mostly HTML with some special mustache tags s
 == What do the templates do?
 
 The layout templates, which are stored in [.path]_src/layouts/_, provide the main page structure.
-The partial templates, in [.path]_src/partials/_, fill in different regions of a page, such as the navigation and footer.
+The partial templates, in [.path]_src/partials/_, fill in different regions of a page, such as the article and breadcrumbs.
+The shared partials define the page structure, while five named slots (the logo, navbar links, footer, favicons and meta tags) are filled by the selected brand.
+See xref:brands.adoc[] for the slots.
 
 The templates read from a model that's populated by Antora.
 The model can be accessed by enclosing path expressions in mustaches, which are `{{` and `}}` or `{{{` and `}}}` (e.g., `+{{{page.title}}}+`).
