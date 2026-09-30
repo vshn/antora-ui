@@ -55,6 +55,33 @@ body {
   min-width: 0;
 }
 
+.navbar-search-toggle {
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--navbar-font-color);
+  line-height: 1;
+  position: relative;
+  width: 3rem;
+  margin-left: auto;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  cursor: pointer;
+}
+
+.navbar-search-toggle svg {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+.navbar-search-toggle + .navbar-burger {
+  margin-left: 0;
+}
+
 .navbar-burger span {
   background-color: var(--navbar-font-color);
   height: 1.5px;
@@ -139,6 +166,7 @@ body {
   white-space: nowrap;
 }
 
+/* the 1024px breakpoint is repeated in src/js/05-mobile-navbar.js (matchMedia); change both together */
 @media screen and (max-width: 1023.5px) {
   .navbar-brand {
     height: inherit;
@@ -157,8 +185,15 @@ body {
     padding: 0.5rem 0;
   }
 
-  .navbar-menu:not(.is-active) {
+  .navbar-menu:not(.is-active),
+  .navbar-search:not(.is-active) {
     display: none;
+  }
+
+  .navbar-search {
+    background: var(--navbar-menu-background);
+    box-shadow: 0 8px 16px rgba(10, 10, 10, 0.1);
+    padding: 0.5rem 1rem;
   }
 
   .navbar-menu a.navbar-item:hover,
@@ -174,8 +209,16 @@ body {
 }
 
 @media screen and (min-width: 1024px) {
-  .navbar-burger {
+  .navbar-burger,
+  .navbar-search-toggle {
     display: none;
+  }
+
+  .navbar-search {
+    display: flex;
+    align-items: center;
+    order: 1;
+    padding: 0.5rem 1rem;
   }
 
   .navbar,
