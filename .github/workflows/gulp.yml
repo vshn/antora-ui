@@ -2,14 +2,45 @@ name: build & release
 
 on:
   push:
-    branches: [ '*' ]
+    # ** is needed because * does not match the / in branch names like feat/name
+    branches: [ '**' ]
     tags: [ '*' ]
-  # every base branch, so a pull request stacked on another one gets CI too
+  # every base branch, so a pull request stacked on another one gets CI too.
   pull_request:
 
 jobs:
-  build:
+  brands:
     runs-on: ubuntu-latest
+    outputs:
+      names: ${{ steps.read.outputs.names }}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v7
+
+    # jq is on the runner and a YAML parser is not, which is why the manifest is JSON.
+    # A fifth brand is one directory and one line here, with no change to this workflow.
+    - name: Read the brand manifest
+      id: read
+      run: |
+        # Names reach shell commands, artifact names and GITHUB_ENV in later jobs, so a bad
+        # value stops here, before it can join the matrix.
+        jq -e 'all(.brands[].name; test("^[a-z0-9][a-z0-9_-]*$")) and all(.brands[].bundle; test("^[A-Za-z0-9][A-Za-z0-9._-]*[.]zip$"))' brands.json > /dev/null \
+          || { echo "brands.json holds an invalid brand name or bundle name" >&2; exit 1; }
+        # The release job merges every artifact into one dist/, so two brands sharing a bundle file
+        # name would overwrite each other there and publish the wrong UI under that name.
+        jq -e '([.brands[].name] | length) == ([.brands[].name] | unique | length)' brands.json > /dev/null \
+          || { echo "brands.json lists a duplicate brand name" >&2; exit 1; }
+        jq -e '([.brands[].bundle] | length) == ([.brands[].bundle] | unique | length)' brands.json > /dev/null \
+          || { echo "brands.json lists a duplicate bundle file name" >&2; exit 1; }
+        echo "names=$(jq -c '[.brands[].name]' brands.json)" >> "$GITHUB_OUTPUT"
+
+  build:
+    needs: brands
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        brand: ${{ fromJSON(needs.brands.outputs.names) }}
 
     steps:
     - name: Checkout
@@ -24,39 +55,110 @@ jobs:
     - name: Install dependencies
       run: npm ci
 
+    - name: Read this brand's bundle name
+      env:
+        BRAND: ${{ matrix.brand }}
+      run: |
+        case "$BRAND" in
+          *[!a-z0-9_-]*|'') echo "invalid brand name: $BRAND" >&2; exit 1 ;;
+        esac
+        echo "UI_BUNDLE=build/$(jq -r --arg b "$BRAND" '.brands[] | select(.name == $b) | .bundle' brands.json)" >> "$GITHUB_ENV"
+
     - name: Build UI bundle
-      run: npx gulp bundle
+      env:
+        BRAND: ${{ matrix.brand }}
+      run: |
+        case "$BRAND" in
+          *[!a-z0-9_-]*|'') echo "invalid brand name: $BRAND" >&2; exit 1 ;;
+        esac
+        npx gulp bundle --brand="$BRAND"
 
     - name: Build a page with the bundle in the sites' Antora image
       run: sh test/antora-image.sh
 
     - name: Install Playwright browser
+      id: playwright
       run: npx playwright install --with-deps chromium
 
     - name: Test preview
       run: npm test
+      env:
+        BRAND: ${{ matrix.brand }}
 
     - name: Test the published bundle assets
       run: npm run test:bundle
+      env:
+        BRAND: ${{ matrix.brand }}
+
+    # After the tests, so a failure here cannot hide a test failure. It runs even when a test failed,
+    # because a failing brand is the one a reviewer most wants to look at, but not when the browser was
+    # never installed, where it would only add a second, misleading failure.
+    - name: Capture screenshots
+      if: ${{ !cancelled() && steps.playwright.outcome == 'success' }}
+      run: npx playwright test test/screenshot.spec.js
+      env:
+        BRAND: ${{ matrix.brand }}
+        SCREENSHOTS: '1'
+
+    - name: Upload screenshots
+      if: ${{ !cancelled() && steps.playwright.outcome == 'success' }}
+      uses: actions/upload-artifact@v7
+      with:
+        name: screenshots-${{ matrix.brand }}
+        path: screenshots/${{ matrix.brand }}/
+        if-no-files-found: error
 
     - name: Upload test results
       if: failure()
       uses: actions/upload-artifact@v7
       with:
-        name: test-results
+        name: test-results-${{ matrix.brand }}
         path: test-results/
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v7
       with:
-        name: ui-bundle
-        path: build/ui-bundle.zip
+        name: ui-bundle-${{ matrix.brand }}
+        path: ${{ env.UI_BUNDLE }}
+
+  release:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    steps:
+    # brands.json says how many bundles to expect, so the check below reads the manifest, not a number.
+    - name: Checkout
+      uses: actions/checkout@v7
+
+    - name: Collect every brand's bundle
+      uses: actions/download-artifact@v7
+      with:
+        pattern: ui-bundle-*
+        merge-multiple: true
+        path: dist
+
+    # ncipollo/release-action publishes a release with no assets when the glob matches nothing, so the
+    # release would be green and the four sites that pin ui-bundle.zip would break at their next bump.
+    - name: Verify the assets about to be released
+      run: |
+        ls -l dist
+        if [ ! -f dist/ui-bundle.zip ]; then
+          echo "dist/ui-bundle.zip is missing. It is the file four production sites pin (vshn/handbook, vshn/docs/kb, vshn/docs/products, vshn/appcat-user-docs)." >&2
+          exit 1
+        fi
+        expected=$(jq '.brands | length' brands.json)
+        found=$(find dist -maxdepth 1 -name '*.zip' | wc -l | tr -d ' ')
+        if [ "$found" != "$expected" ]; then
+          echo "dist/ holds $found zip files, but brands.json lists $expected brands." >&2
+          exit 1
+        fi
+        echo "OK: $found zip files, including dist/ui-bundle.zip"
 
     - name: Create Release
-      if: startsWith(github.ref, 'refs/tags/')
       uses: ncipollo/release-action@v1.21.0
       with:
-        artifacts: "build/ui-bundle.zip"
+        artifacts: "dist/*.zip"
         artifactContentType: "application/zip"
+        artifactErrorsFailBuild: true
         generateReleaseNotes: true
         token: ${{ secrets.GITHUB_TOKEN }}

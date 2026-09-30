@@ -3,5 +3,5 @@
 # sites actually get: CSS minified by cssnano with the custom properties resolved, not the preview build.
 set -e
 cd "$(dirname "$0")/.."
-node_modules/.bin/gulp bundle:preview > /dev/null
+node_modules/.bin/gulp bundle:preview ${BRAND:+--brand=$BRAND} > /dev/null
 exec node_modules/.bin/gulp preview:serve

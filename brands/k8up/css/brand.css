@@ -1,0 +1,15 @@
+/* K8up logo */
+
+.k8up_logo {
+  background: transparent url(../img/k8up.svg) no-repeat center;
+  background-size: contain;
+  width: 40px;
+  height: 40px;
+  margin: 0 10px 0 0;
+}
+
+.footer .cncf-logo {
+  display: block;
+  margin: 0.5rem auto 0;
+  width: 240px;
+}

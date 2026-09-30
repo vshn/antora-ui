@@ -1,0 +1,3 @@
+# Captured screenshots are build output, not source.
+*
+!.gitignore

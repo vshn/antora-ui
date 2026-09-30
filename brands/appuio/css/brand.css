@@ -1,0 +1,9 @@
+/* APPUiO logo */
+
+.appuio_logo {
+  background: transparent url(../img/appuio.svg) no-repeat center;
+  background-size: contain;
+  width: 80px;
+  height: 40px;
+  margin: 0 10px 0 0;
+}

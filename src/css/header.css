@@ -139,16 +139,6 @@ body {
   white-space: nowrap;
 }
 
-/* VSHN Logo */
-
-.vshn_logo {
-  background: transparent url(../img/vshn.svg) no-repeat center;
-  background-size: contain;
-  width: 60px;
-  height: 40px;
-  margin: 0 10px 0 0;
-}
-
 @media screen and (max-width: 1023.5px) {
   .navbar-brand {
     height: inherit;
@@ -174,12 +164,12 @@ body {
   .navbar-menu a.navbar-item:hover,
   .navbar-menu .navbar-link:hover {
     background: var(--navbar-menu_hover-background);
-    color: var(--navbar-font-color);
+    color: var(--navbar_hover-font-color);
   }
 
   .navbar-dropdown a.navbar-item:hover {
     background: var(--navbar-menu_hover-background);
-    color: var(--vshn-rich-black);
+    color: var(--navbar_hover-font-color);
   }
 }
 
@@ -242,7 +232,7 @@ body {
   .navbar-end .navbar-link:hover,
   .navbar-end .navbar-item.has-dropdown:hover .navbar-link {
     background: var(--navbar_hover-background);
-    color: var(--navbar-font-color);
+    color: var(--navbar_hover-font-color);
   }
 
   .navbar-end .navbar-link::after {
@@ -277,6 +267,6 @@ body {
 
   .navbar-dropdown a.navbar-item:hover {
     background: var(--navbar-menu_hover-background);
-    color: var(--vshn-rich-black);
+    color: var(--navbar_hover-font-color);
   }
 }

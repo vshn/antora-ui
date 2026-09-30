@@ -1,0 +1,29 @@
+:root {
+  /* APPUiO palette */
+  --appuio-dark-blue: #0e2f47;
+  --appuio-turquoise: #15b0bf;
+  --appuio-light-blue: #b2e6ec;
+  --appuio-yellow: #ffd301;
+
+  /* the color slots the shared stylesheets read */
+  --accent-color: var(--appuio-turquoise);
+  --mark-background: var(--appuio-yellow);
+  --body-font-color: var(--color-jet-70);
+  --panel-background: var(--color-smoke-30);
+  --panel-border-color: var(--color-smoke-90);
+  --scrollbar-thumb-color: var(--color-gray-10);
+  --navbar-background: var(--appuio-turquoise);
+  --navbar-font-color: var(--color-white);
+  --navbar_hover-background: var(--appuio-yellow);
+  --navbar_hover-font-color: var(--appuio-dark-blue);
+  --navbar-menu-background: var(--appuio-light-blue);
+  --navbar-menu-font-color: var(--appuio-dark-blue);
+  --navbar-menu_hover-background: var(--appuio-yellow);
+  --link-font-color: var(--appuio-turquoise);
+  --link_hover-font-color: var(--appuio-dark-blue);
+  --admonition-background: var(--color-smoke-30);
+  --sidebar-background: var(--color-smoke-90);
+  --footer-background: var(--color-smoke-90);
+  --footer-font-color: var(--color-gray-70);
+  --footer-link-font-color: var(--appuio-turquoise);
+}

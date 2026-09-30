@@ -5,7 +5,11 @@ const path = require('path')
 const yauzl = require('yauzl')
 const { test, expect } = require('@playwright/test')
 
-const BUNDLE = path.join(__dirname, '..', 'build', 'ui-bundle.zip')
+const BRANDS = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'brands.json'), 'utf8')).brands
+const BRAND = process.env.BRAND || 'vshn'
+// derive the bundle from the brand, so `BRAND=appuio npm test` cannot end up checking the VSHN zip
+const BUNDLE = path.join(__dirname, '..', process.env.UI_BUNDLE ||
+  path.join('build', BRANDS.find((it) => it.name === BRAND).bundle))
 const DEFLATE = 8
 // Node 24.17, which the Antora image of the documentation sites runs, never finishes reading
 // a compressed zip entry of 64 KiB or more, and Antora then exits without output
@@ -46,7 +50,28 @@ function readZip (file) {
 }
 
 test.describe('UI bundle', () => {
-  test.skip(!fs.existsSync(BUNDLE), 'build/ui-bundle.zip is missing: run gulp bundle first')
+  // A bare `npm test` has no bundle and skips these. Naming a brand or a bundle means the caller expects
+  // them to run, so a missing zip must fail rather than let a green run hide that they never did.
+  const EXPLICIT = Boolean(process.env.BRAND || process.env.UI_BUNDLE)
+  test.skip(!EXPLICIT && !fs.existsSync(BUNDLE), `${BUNDLE} is missing: run gulp bundle first`)
+  test.beforeAll(() => {
+    if (!fs.existsSync(BUNDLE)) {
+      throw new Error(`${BUNDLE} is missing: run 'gulp bundle --brand=${BRAND}' first`)
+    }
+  })
+
+  test('ships this brand\'s images and no other brand\'s', async () => {
+    const names = (await readZip(BUNDLE)).map(({ entry }) => entry.fileName)
+    const mine = BRANDS.find((it) => it.name === BRAND)
+    expect(names, `${mine.logo} is missing`).toContain(mine.logo)
+    const imgDir = (name) => fs.readdirSync(path.join(__dirname, '..', 'brands', name, 'img'))
+    const own = new Set(imgDir(BRAND))
+    const shipped = new Set(names.filter((name) => name.startsWith('img/')).map((name) => path.basename(name)))
+    for (const other of BRANDS.filter((it) => it.name !== BRAND)) {
+      const foreign = imgDir(other.name).filter((file) => !own.has(file) && shipped.has(file))
+      expect(foreign, `images of ${other.name} leaked into the ${BRAND} bundle`).toEqual([])
+    }
+  })
 
   test('has no compressed entry of 64 KiB or more', async () => {
     const entries = await readZip(BUNDLE)

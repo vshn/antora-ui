@@ -66,6 +66,8 @@ TIP: If you're building on the default UI, you may instead want to define or upd
 
  $ gulp preview
 
+This previews the `vshn` brand; add `--brand=<name>` for another.
+
 If you see the new font, you've now successfully added it to your UI.
 If you aren't sure, look for the https://developer.mozilla.org/en-US/docs/Tools/Page_Inspector/How_to/Edit_fonts[All fonts on page] section in your browser's developer tools to see whether the font was loaded.
 
@@ -118,6 +120,8 @@ TIP: If you're building on the default UI, you may instead want to define or upd
 . Test the new font by previewing your UI:
 
  $ gulp preview
+
+This previews the `vshn` brand; add `--brand=<name>` for another.
 
 If you see the new font, you've now successfully added it to your UI.
 If you aren't sure, look for the https://developer.mozilla.org/en-US/docs/Tools/Page_Inspector/How_to/Edit_fonts[All fonts on page] section in your browser's developer tools to see whether the font was loaded.

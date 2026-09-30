@@ -1,0 +1,33 @@
+:root {
+  /* K8up palette */
+  --k8up-blue: #1a5ce6;
+  --k8up-salmon: #bb7e8c;
+  --k8up-brick: #c9b6be;
+  --k8up-rich-black: #000d1a;
+  --k8up-roman-silver: #818898;
+  --k8up-silver-sand: #b9bfc6;
+  --k8up-ghost-white: #e9ebf2;
+  --k8up-cultured: #f6f7f9;
+
+  /* the color slots the shared stylesheets read */
+  --accent-color: var(--k8up-blue);
+  --mark-background: var(--k8up-brick);
+  --body-font-color: var(--k8up-rich-black);
+  --panel-background: var(--k8up-cultured);
+  --panel-border-color: var(--k8up-silver-sand);
+  --scrollbar-thumb-color: var(--k8up-silver-sand);
+  --navbar-background: var(--k8up-brick);
+  --navbar-font-color: var(--color-black);
+  --navbar_hover-background: var(--k8up-salmon);
+  --navbar_hover-font-color: var(--color-black);
+  --navbar-menu-background: var(--k8up-brick);
+  --navbar-menu-font-color: var(--color-black);
+  --navbar-menu_hover-background: var(--k8up-salmon);
+  --link-font-color: var(--k8up-blue);
+  --link_hover-font-color: var(--k8up-blue);
+  --admonition-background: var(--k8up-ghost-white);
+  --sidebar-background: var(--k8up-ghost-white);
+  --footer-background: var(--k8up-cultured);
+  --footer-font-color: var(--k8up-roman-silver);
+  --footer-link-font-color: var(--k8up-blue);
+}
