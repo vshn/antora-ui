@@ -20,6 +20,7 @@
   --navbar-background: var(--syn-purple);
   --navbar-font-color: var(--syn-light-blue);
   --navbar_hover-background: var(--syn-yellow);
+  --navbar_hover-font-color: var(--syn-purple);
   --navbar-menu-background: var(--syn-purple);
   --navbar-menu-font-color: var(--syn-light-blue);
   --navbar-menu_hover-background: var(--syn-yellow);

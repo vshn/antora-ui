@@ -50,7 +50,15 @@ function readZip (file) {
 }
 
 test.describe('UI bundle', () => {
-  test.skip(!fs.existsSync(BUNDLE), `${BUNDLE} is missing: run gulp bundle first`)
+  // A bare `npm test` has no bundle and skips these. Naming a brand or a bundle means the caller expects
+  // them to run, so a missing zip must fail rather than let a green run hide that they never did.
+  const EXPLICIT = Boolean(process.env.BRAND || process.env.UI_BUNDLE)
+  test.skip(!EXPLICIT && !fs.existsSync(BUNDLE), `${BUNDLE} is missing: run gulp bundle first`)
+  test.beforeAll(() => {
+    if (!fs.existsSync(BUNDLE)) {
+      throw new Error(`${BUNDLE} is missing: run 'gulp bundle --brand=${BRAND}' first`)
+    }
+  })
 
   test('ships this brand\'s images and no other brand\'s', async () => {
     const names = (await readZip(BUNDLE)).map(({ entry }) => entry.fileName)

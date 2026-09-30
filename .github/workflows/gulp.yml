@@ -26,6 +26,12 @@ jobs:
         # value stops here, before it can join the matrix.
         jq -e 'all(.brands[].name; test("^[a-z0-9][a-z0-9_-]*$")) and all(.brands[].bundle; test("^[A-Za-z0-9][A-Za-z0-9._-]*[.]zip$"))' brands.json > /dev/null \
           || { echo "brands.json holds an invalid brand name or bundle name" >&2; exit 1; }
+        # The release job merges every artifact into one dist/, so two brands sharing a bundle file
+        # name would overwrite each other there and publish the wrong UI under that name.
+        jq -e '([.brands[].name] | length) == ([.brands[].name] | unique | length)' brands.json > /dev/null \
+          || { echo "brands.json lists a duplicate brand name" >&2; exit 1; }
+        jq -e '([.brands[].bundle] | length) == ([.brands[].bundle] | unique | length)' brands.json > /dev/null \
+          || { echo "brands.json lists a duplicate bundle file name" >&2; exit 1; }
         echo "names=$(jq -c '[.brands[].name]' brands.json)" >> "$GITHUB_OUTPUT"
 
   build:

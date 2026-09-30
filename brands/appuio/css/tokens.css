@@ -15,6 +15,7 @@
   --navbar-background: var(--appuio-turquoise);
   --navbar-font-color: var(--color-white);
   --navbar_hover-background: var(--appuio-yellow);
+  --navbar_hover-font-color: var(--appuio-dark-blue);
   --navbar-menu-background: var(--appuio-light-blue);
   --navbar-menu-font-color: var(--appuio-dark-blue);
   --navbar-menu_hover-background: var(--appuio-yellow);

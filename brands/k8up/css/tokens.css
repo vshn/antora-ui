@@ -1,10 +1,8 @@
 :root {
   /* K8up palette */
   --k8up-blue: #1a5ce6;
-  --k8up-teal: #a08794;
   --k8up-salmon: #bb7e8c;
   --k8up-brick: #c9b6be;
-  --k8up-purple: #d1becf;
   --k8up-rich-black: #000d1a;
   --k8up-roman-silver: #818898;
   --k8up-silver-sand: #b9bfc6;
@@ -21,6 +19,7 @@
   --navbar-background: var(--k8up-brick);
   --navbar-font-color: var(--color-black);
   --navbar_hover-background: var(--k8up-salmon);
+  --navbar_hover-font-color: var(--color-black);
   --navbar-menu-background: var(--k8up-brick);
   --navbar-menu-font-color: var(--color-black);
   --navbar-menu_hover-background: var(--k8up-salmon);

@@ -19,6 +19,7 @@
   --navbar-background: var(--vshn-cultured);
   --navbar-font-color: var(--vshn-rich-black);
   --navbar_hover-background: var(--vshn-capri);
+  --navbar_hover-font-color: var(--vshn-rich-black);
   --navbar-menu-background: var(--vshn-cultured);
   --navbar-menu-font-color: var(--vshn-rich-black);
   --navbar-menu_hover-background: var(--vshn-capri);

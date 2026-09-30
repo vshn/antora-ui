@@ -164,7 +164,7 @@ body {
   .navbar-menu a.navbar-item:hover,
   .navbar-menu .navbar-link:hover {
     background: var(--navbar-menu_hover-background);
-    color: var(--navbar-font-color);
+    color: var(--navbar_hover-font-color);
   }
 
   .navbar-dropdown a.navbar-item:hover {
@@ -232,7 +232,7 @@ body {
   .navbar-end .navbar-link:hover,
   .navbar-end .navbar-item.has-dropdown:hover .navbar-link {
     background: var(--navbar_hover-background);
-    color: var(--navbar-font-color);
+    color: var(--navbar_hover-font-color);
   }
 
   .navbar-end .navbar-link::after {

@@ -6,7 +6,12 @@ const { test, expect } = require('@playwright/test')
 
 // The whole point of the brand overlay: a brand fills slots, it does not edit the shared UI.
 // The day someone puts a VSHN link back into a shared partial, this test says so.
-const BRAND_WORDS = /vshn|appuio|k8up|projectsyn|syn\.tools/i
+// The terms come from brands.json, so a brand added as the documentation describes is covered without
+// touching this file. The extras are historical names that are not manifest entries. Word boundaries
+// make a bare `syn` safe: \bsyn\b does not match `sync`.
+const MANIFEST = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'brands.json'), 'utf8')).brands
+const TERMS = [...new Set([...MANIFEST.map((it) => it.name), 'projectsyn', 'syn.tools'])]
+const BRAND_WORDS = new RegExp('\\b(' + TERMS.map((it) => it.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|') + ')\\b', 'i')
 const SRC = path.join(__dirname, '..', 'src')
 
 function walk (dir) {

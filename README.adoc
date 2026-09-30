@@ -263,7 +263,8 @@ If you have the preview running, and you want to bundle without causing the prev
 
  $ gulp bundle:pack
 
-This packs the selected brand, `vshn` by default, so `--brand=<name>` applies here too.
+This packs the assets already built, and it refuses to run unless they were built for the selected brand, `vshn` by default.
+If the last build was for another brand, it stops with an error naming both; build again with `--brand=<name>` first.
 The UI bundle will again be available at [.path]_build/ui-bundle.zip_ for `vshn`.
 
 ==== Source Maps

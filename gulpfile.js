@@ -4,6 +4,7 @@ const { parallel, series, watch } = require('gulp')
 const createTask = require('./gulp.d/lib/create-task')
 const exportTasks = require('./gulp.d/lib/export-tasks')
 const log = require('fancy-log')
+const vfs = require('vinyl-fs')
 
 const brand = require('./gulp.d/lib/brand').selected()
 log(`Brand: ${brand.name} (${brand.title}) -> ${brand.bundle}`)
@@ -56,7 +57,7 @@ const formatTask = createTask({
 const stageTask = createTask({
   name: 'build:stage',
   desc: 'Copy the shared UI and the selected brand into one tree to compile',
-  call: task.stage(srcDir, brand.dir, stagingDir),
+  call: task.stage(srcDir, brand.dir, stagingDir, brand.name),
 })
 
 const buildAssetsTask = createTask({
@@ -73,6 +74,13 @@ const fingerprintTask = createTask({
   call: task.fingerprint(destDir),
 })
 
+// Copies the brand marker that build:stage wrote through to the built tree, after the compile has
+// succeeded, so a tree that holds a marker was built completely for that brand. bundle:pack reads it.
+const markTask = createTask({
+  name: 'build:mark',
+  call: () => vfs.src('.brand', { cwd: stagingDir, dot: true }).pipe(vfs.dest(destDir)),
+})
+
 // Preview builds do not run `clean`, so without this a file deleted from a brand would still be served
 // from the previous build. Only the UI destination goes: the preview pages and search index are rewritten later.
 const cleanDestTask = createTask({
@@ -83,7 +91,7 @@ const cleanDestTask = createTask({
 const buildTask = createTask({
   name: 'build',
   desc: 'Build and stage the UI assets for bundling',
-  call: series(cleanDestTask, stageTask, buildAssetsTask, fingerprintTask),
+  call: series(cleanDestTask, stageTask, buildAssetsTask, fingerprintTask, markTask),
 })
 
 const bundleBuildTask = createTask({
@@ -98,7 +106,8 @@ const bundlePackTask = createTask({
     destDir,
     buildDir,
     brand.bundle,
-    (bundlePath) => !process.env.CI && log(`Antora option: --ui-bundle-url=${bundlePath}`)
+    (bundlePath) => !process.env.CI && log(`Antora option: --ui-bundle-url=${bundlePath}`),
+    brand.name
   ),
 })
 

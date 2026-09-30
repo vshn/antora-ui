@@ -12,6 +12,10 @@ const brands = () => JSON.parse(fs.readFileSync(ospath.join(ROOT, 'brands.json')
 // a bare `gulp preview` works. CI always passes the brand, and an unknown name fails the build
 // rather than quietly producing a VSHN-colored bundle under another brand's name.
 function selected () {
+  // `--brand vshn` would otherwise be ignored and fall back to the default, which is a silent wrong build
+  if (process.argv.includes('--brand')) {
+    throw new Error('write the brand as --brand=<name>, with an equals sign and no space, as in --brand=k8up')
+  }
   const flag = process.argv.find((it) => it.startsWith('--brand='))
   const name = flag ? flag.slice('--brand='.length) : process.env.BRAND || DEFAULT_BRAND
   const all = brands()
