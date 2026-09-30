@@ -74,9 +74,10 @@ The descriptor is built from the site's own `site.url`, `site.title` and `search
 It cannot be a static file in the UI, because Antora copies static files verbatim and OpenSearch needs absolute URLs.
 The nginx image serves the generated page at `/opensearchdescription.xml` with the content type `application/opensearchdescription+xml`.
 
-The OpenSearch specification limits `ShortName` to 16 characters, and the layout does not truncate it.
-It uses `site.title`, so a longer title needs the optional key `opensearchShortName` under `site.keys`.
-`Description` always uses `site.title`.
+The OpenSearch specification limits `ShortName` to 16 characters, and the layout does not truncate it, because a name that is wrong is better noticed than hidden.
+It falls back to `site.title`, which in practice is always too long: the real titles of these sites run from 31 characters ("APPUiO Cloud User Documentation") to 45 ("K8up Kubernetes Backup Operator Documentation").
+So set `opensearchShortName` under `site.keys` as a matter of course, for example `K8up Docs`.
+`Description` always uses `site.title`, which has no such limit.
 
 == Looking at a brand
 
