@@ -169,7 +169,7 @@ body {
 
   .navbar-dropdown a.navbar-item:hover {
     background: var(--navbar-menu_hover-background);
-    color: var(--navbar-menu-font-color);
+    color: var(--navbar_hover-font-color);
   }
 }
 
@@ -267,6 +267,6 @@ body {
 
   .navbar-dropdown a.navbar-item:hover {
     background: var(--navbar-menu_hover-background);
-    color: var(--navbar-menu-font-color);
+    color: var(--navbar_hover-font-color);
   }
 }
