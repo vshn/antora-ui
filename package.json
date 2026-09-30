@@ -1,5 +1,6 @@
 {
   "name": "@vshn/antora-ui",
+  "private": true,
   "description": "Antora UI bundles for VSHN, APPUiO, K8up and Project Syn documentation sites, built from one source tree",
   "homepage": "https://github.com/vshn/antora-ui",
   "license": "MPL-2.0",
