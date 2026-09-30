@@ -137,6 +137,29 @@ test.describe('preview page', () => {
   })
 })
 
+test.describe('mobile navbar', () => {
+  test('resets the open panels when the window widens to desktop', async ({ page }) => {
+    await page.setViewportSize({ width: 900, height: 800 })
+    await page.goto('/index.html')
+    await page.locator('.navbar-burger').click()
+    await expect(page.locator('html')).toHaveClass(/is-clipped--navbar/)
+    await page.locator('.navbar-search-toggle').click()
+    await expect(page.locator('#topbar-search')).toHaveClass(/is-active/)
+    // opening the search closed the menu, and only the menu clips the page
+    await expect(page.locator('#topbar-nav')).not.toHaveClass(/is-active/)
+    await expect(page.locator('html')).not.toHaveClass(/is-clipped--navbar/)
+    await page.locator('.navbar-burger').click()
+    await page.setViewportSize({ width: 1280, height: 800 })
+    for (const sel of ['.navbar-burger', '.navbar-search-toggle', '#topbar-nav', '#topbar-search']) {
+      await expect(page.locator(sel)).not.toHaveClass(/is-active/)
+    }
+    await expect(page.locator('.navbar-search-toggle')).toHaveAttribute('aria-expanded', 'false')
+    await expect(page.locator('html')).not.toHaveClass(/is-clipped--navbar/)
+    await page.setViewportSize({ width: 900, height: 800 })
+    await expect(page.locator('#topbar-search')).toBeHidden()
+  })
+})
+
 test.describe('search', () => {
   async function searchFor (page, query) {
     await page.locator('#search-input').fill(query)

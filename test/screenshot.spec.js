@@ -94,4 +94,45 @@ test.describe(`screenshots of the ${BRAND} brand`, () => {
     const height = Math.min(900, Math.ceil(first.y + first.height * 3))
     await shot(page, 'search.png', { clip: { x: 0, y: 0, width: 1280, height } })
   })
+
+  // The search toggle below 1024px: the field must be reachable without opening the menu, and the
+  // results must not be covered by anything while the query stays editable.
+  test('mobile-search-closed.png', async ({ page }) => {
+    await page.setViewportSize({ width: 900, height: 600 })
+    await page.goto('/index.html')
+    await expect(page.locator('.navbar-search-toggle')).toBeVisible()
+    await expect(page.locator('#topbar-search')).toBeHidden()
+    await shot(page, 'mobile-search-closed.png', { clip: { x: 0, y: 0, width: 900, height: 300 } })
+  })
+
+  test('mobile-search-open.png', async ({ page }) => {
+    await page.setViewportSize({ width: 900, height: 600 })
+    await page.goto('/index.html')
+    await page.locator('.navbar-search-toggle').click()
+    await expect(page.locator('#search-input')).toBeVisible()
+    await expect(page.locator('#search-input')).toBeFocused()
+    await expect(page.locator('.navbar-search-toggle')).toHaveAttribute('aria-expanded', 'true')
+    await shot(page, 'mobile-search-open.png')
+  })
+
+  test('mobile-search-results.png', async ({ page }) => {
+    await page.setViewportSize({ width: 900, height: 700 })
+    await page.goto('/index.html')
+    await page.locator('.navbar-search-toggle').click()
+    await page.locator('#search-input').fill('TOML')
+    await page.locator('#search-input').press('Enter')
+    await expect(page.locator('article.doc h1.page')).toHaveText('Search Results for "TOML"')
+    await expect(page.locator('article.doc .search-entry').first()).toBeVisible()
+    await expect(page.locator('#search-input')).toHaveValue('TOML')
+    await expect(page.locator('#search-input')).toBeVisible()
+    await page.mouse.move(0, 0)
+    await shot(page, 'mobile-search-results.png')
+  })
+
+  test('desktop-navbar.png', async ({ page }) => {
+    await page.goto('/index.html')
+    await expect(page.locator('.navbar-search-toggle')).toBeHidden()
+    await expect(page.locator('#search-input')).toBeVisible()
+    await shot(page, 'desktop-navbar.png', { clip: { x: 0, y: 0, width: 1280, height: 120 } })
+  })
 })
