@@ -42,12 +42,35 @@ Every other brand is called `ui-bundle-<brand>.zip`.
 == Adding one
 
 . Create `brands/<name>/` with `css/tokens.css`, `css/brand.css`, an `img/` directory and the five partials listed above.
+The practical way to start `tokens.css` is to copy an existing brand's file and change the values, because this page does not list the color slot names and copying is the only way to get the complete set.
+Rename the variables that start with the old brand's prefix, such as `--k8up-blue`, to start with `--<name>-`: `test/brand-free.spec.js` treats every other variable as a slot that all brands must declare.
 . Add one object to `brands.json` with the keys `name`, `title`, `bundle`, `logo` and `navbarBackground`.
 `navbarBackground` is the color the tests expect `.navbar` to compute to, for example `"rgb(246, 247, 249)"`.
-. Run `BRAND=<name> npx playwright test` and `npx gulp bundle --brand=<name>`.
+. Build the bundle first with `npx gulp bundle --brand=<name>`, then run `BRAND=<name> npx playwright test` and `BRAND=<name> npm run test:bundle`.
+The bundle tests fail rather than skip when the zip is missing, hence the order.
+`npm run test:bundle` is the only command that runs `test/brand-css.spec.js`.
 
 The CI matrix reads `brands.json` with `jq`, so there is no workflow to edit.
 The workflow validates brand names before they reach a shell.
+
+== Looking at a brand
+
+The tests check computed colors, which does not tell you whether a page looks right.
+To see a brand, capture its screenshots:
+
+[source,console]
+----
+$ SCREENSHOTS=1 BRAND=k8up npx playwright test test/screenshot.spec.js
+$ sh test/screenshots.sh
+----
+
+The first command captures one brand.
+The second reads `brands.json` and captures every brand, one after the other, because two builds in the same workspace delete each other's files.
+Both write to `screenshots/<brand>/`, which git ignores: `style-guide.png` (the full style-guide page), `404.png`, `navbar-hover.png` (the navbar with the first dropdown open) and `search.png` (a search with results).
+The spec skips itself unless `SCREENSHOTS=1` is set, so `npm test` does not write images.
+
+CI runs the same spec for each brand and attaches the images to the run as the `screenshots-<brand>` artifact.
+A reviewer can see a brand from the run page without building it.
 
 == The tests that keep this working
 

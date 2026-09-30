@@ -77,6 +77,7 @@ jobs:
       run: sh test/antora-image.sh
 
     - name: Install Playwright browser
+      id: playwright
       run: npx playwright install --with-deps chromium
 
     - name: Test preview
@@ -88,6 +89,24 @@ jobs:
       run: npm run test:bundle
       env:
         BRAND: ${{ matrix.brand }}
+
+    # After the tests, so a failure here cannot hide a test failure. It runs even when a test failed,
+    # because a failing brand is the one a reviewer most wants to look at, but not when the browser was
+    # never installed, where it would only add a second, misleading failure.
+    - name: Capture screenshots
+      if: ${{ !cancelled() && steps.playwright.outcome == 'success' }}
+      run: npx playwright test test/screenshot.spec.js
+      env:
+        BRAND: ${{ matrix.brand }}
+        SCREENSHOTS: '1'
+
+    - name: Upload screenshots
+      if: ${{ !cancelled() && steps.playwright.outcome == 'success' }}
+      uses: actions/upload-artifact@v7
+      with:
+        name: screenshots-${{ matrix.brand }}
+        path: screenshots/${{ matrix.brand }}/
+        if-no-files-found: error
 
     - name: Upload test results
       if: failure()
@@ -107,6 +126,10 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
     steps:
+    # brands.json says how many bundles to expect, so the check below reads the manifest, not a number.
+    - name: Checkout
+      uses: actions/checkout@v7
+
     - name: Collect every brand's bundle
       uses: actions/download-artifact@v7
       with:
@@ -114,13 +137,28 @@ jobs:
         merge-multiple: true
         path: dist
 
-    - name: List what is about to be released
-      run: ls -l dist
+    # ncipollo/release-action publishes a release with no assets when the glob matches nothing, so the
+    # release would be green and the four sites that pin ui-bundle.zip would break at their next bump.
+    - name: Verify the assets about to be released
+      run: |
+        ls -l dist
+        if [ ! -f dist/ui-bundle.zip ]; then
+          echo "dist/ui-bundle.zip is missing. It is the file four production sites pin (vshn/handbook, vshn/docs/kb, vshn/docs/products, vshn/appcat-user-docs)." >&2
+          exit 1
+        fi
+        expected=$(jq '.brands | length' brands.json)
+        found=$(find dist -maxdepth 1 -name '*.zip' | wc -l | tr -d ' ')
+        if [ "$found" != "$expected" ]; then
+          echo "dist/ holds $found zip files, but brands.json lists $expected brands." >&2
+          exit 1
+        fi
+        echo "OK: $found zip files, including dist/ui-bundle.zip"
 
     - name: Create Release
       uses: ncipollo/release-action@v1.21.0
       with:
         artifacts: "dist/*.zip"
         artifactContentType: "application/zip"
+        artifactErrorsFailBuild: true
         generateReleaseNotes: true
         token: ${{ secrets.GITHUB_TOKEN }}
