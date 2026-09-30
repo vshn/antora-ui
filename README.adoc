@@ -3,10 +3,10 @@
 :experimental:
 :hide-uri-scheme:
 // Project URLs:
-:url-project: https://gitlab.com/antora/antora-ui-default
-:url-preview: https://antora.gitlab.io/antora-ui-default
-:url-ci-pipelines: {url-project}/pipelines
-:img-ci-status: {url-project}/badges/master/pipeline.svg
+:url-project: https://github.com/vshn/antora-ui-default
+:url-preview: https://github.com/vshn/antora-ui-default/releases
+:url-ci-pipelines: {url-project}/actions
+:img-ci-status: {url-project}/actions/workflows/gulp.yml/badge.svg
 // External URLs:
 :url-antora: https://antora.org
 :url-antora-docs: https://docs.antora.org
@@ -19,10 +19,15 @@
 :url-nvm-install: {url-nvm}#installation
 :url-source-maps: https://developer.mozilla.org/en-US/docs/Tools/Debugger/How_to/Use_a_source_map
 
-image:{img-ci-status}[CI Status (GitLab CI), link={url-ci-pipelines}]
+image:{img-ci-status}[CI Status (GitHub Actions), link={url-ci-pipelines}]
 
 This project is an archetype that demonstrates how to produce a UI bundle that can be used by {url-antora}[Antora] to generated a documentation site.
 You can see a preview of the default UI at {url-preview}.
+
+This UI is built for four brands from one source tree.
+Run `npx gulp bundle --brand=<vshn|appuio|k8up|syn>`; see the `Brands` page in `docs/` for what a brand
+owns and how to add one.
+A release publishes `ui-bundle.zip` for VSHN and `ui-bundle-<brand>.zip` for the others.
 
 While the default UI is ready to be used with Antora, the intent is that you'll fork it and customize it for your own needs.
 It's intentionally minimalistic so as to give you a good starting point without requiring too much effort to customize.
@@ -159,6 +164,9 @@ To build the UI and preview it in a local web server, run the `preview` command:
 
  $ gulp preview
 
+Without `--brand`, this previews the `vshn` brand.
+To preview another brand, pass it, as in `npx gulp preview --brand=k8up`.
+
 You'll see a URL listed in the output of this command:
 
 ....
@@ -242,16 +250,20 @@ If you need to package the UI so you can use it to generate the documentation si
 
  $ gulp bundle
 
+This builds the `vshn` brand.
+To build another brand, pass it, as in `npx gulp bundle --brand=appuio`.
+
 If any errors are reported by lint, you'll need to fix them.
 
-When the command completes successfully, the UI bundle will be available at [.path]_build/ui-bundle.zip_.
+When the command completes successfully, the UI bundle will be available at [.path]_build/ui-bundle.zip_ for `vshn` and [.path]_build/ui-bundle-<brand>.zip_ for the other brands.
 You can point Antora at this bundle using the `--ui-bundle-url` command-line option.
 
 If you have the preview running, and you want to bundle without causing the preview to be clobbered, use:
 
  $ gulp bundle:pack
 
-The UI bundle will again be available at [.path]_build/ui-bundle.zip_.
+This packs the selected brand, `vshn` by default, so `--brand=<name>` applies here too.
+The UI bundle will again be available at [.path]_build/ui-bundle.zip_ for `vshn`.
 
 ==== Source Maps
 
@@ -268,6 +280,7 @@ If you need to include source maps in the bundle, you can do so by setting the `
  $ SOURCEMAPS=true gulp bundle
 
 In this case, the bundle will include the source maps, which can be used for debugging your production site.
+The bundle is for the `vshn` brand unless you also pass `--brand=<name>`.
 
 == Copyright and License
 

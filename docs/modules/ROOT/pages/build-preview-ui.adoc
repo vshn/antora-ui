@@ -33,6 +33,10 @@ To launch the preview server, execute the following command:
 
  $ gulp preview
 
+Without `--brand`, this previews the `vshn` brand.
+To preview another brand, pass it, as in `npx gulp preview --brand=k8up`.
+See xref:brands.adoc[] for what a brand owns.
+
 You'll see a URL listed in the output of this command:
 
 ....
@@ -54,13 +58,17 @@ If you need to bundle the UI in order to preview the UI on the real site in loca
 
  $ gulp bundle
 
+This builds the `vshn` brand.
+To build another brand, pass it, as in `npx gulp bundle --brand=appuio`.
+
 The `bundle` command also invokes the `lint` command to check that the CSS and JavaScript follow the coding standards.
 
-The UI bundle will be available at [.path]_build/ui-bundle.zip_.
+The UI bundle will be available at [.path]_build/ui-bundle.zip_ for `vshn` and [.path]_build/ui-bundle-<brand>.zip_ for the other brands.
 You can then point Antora at this bundle using the `--ui-bundle-url` command-line option.
 
 If you have the preview running, and you want to bundle without causing the preview to be clobbered, use:
 
  $ gulp bundle:pack
 
-The UI bundle will again be available at [.path]_build/ui-bundle.zip_.
+This packs the selected brand, `vshn` by default, so `--brand=<name>` applies here too.
+The UI bundle will again be available at [.path]_build/ui-bundle.zip_ for `vshn`.

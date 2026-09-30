@@ -1,0 +1,60 @@
+= Brands
+
+One repository builds four UIs.
+The shared UI lives in `src/` and carries no brand string.
+Each brand is a directory under `brands/` that fills the slots the shared templates leave open.
+The brands are `vshn`, `appuio`, `k8up` and `syn`, listed in `brands.json`.
+
+== What a brand owns
+
+[cols="1,3"]
+|===
+| `css/tokens.css` | the palette, and the color slots the shared stylesheets read
+| `css/brand.css` | the logo rule and any rule only this brand needs
+| `img/` | the logo and the favicons
+| `partials/brand-logo.hbs` | the element in the navbar
+| `partials/brand-links.hbs` | the navbar dropdowns
+| `partials/brand-footer.hbs` | the footer text
+| `partials/brand-icons.hbs` | the favicon and apple-touch-icon links
+| `partials/brand-meta.hbs` | `twitter:site` and any other brand meta tag
+|===
+
+A brand does not own the markup around its slots.
+The navbar, the search box and the admonition rendering are shared, so they cannot drift per brand.
+A brand that needs a structural change changes the shared file, where every brand gets it.
+
+== Building one
+
+[source,console]
+----
+$ npx gulp bundle --brand=appuio     # build/ui-bundle-appuio.zip
+$ npx gulp preview --brand=k8up      # http://localhost:5252
+----
+
+The build stages `src/` into `build/staging`, copies the brand over it, then compiles, fingerprints and packs the result.
+The brand comes from `--brand=<name>`, then from the `BRAND` environment variable, then defaults to `vshn`.
+An unknown name fails the build rather than producing a VSHN-colored bundle under another brand's name.
+
+The VSHN bundle is called `ui-bundle.zip` and not `ui-bundle-vshn.zip`, because handbook, kb, products and appcat pin that name.
+Every other brand is called `ui-bundle-<brand>.zip`.
+`brands.json` records the file name for every brand.
+
+== Adding one
+
+. Create `brands/<name>/` with `css/tokens.css`, `css/brand.css`, an `img/` directory and the five partials listed above.
+. Add one object to `brands.json` with the keys `name`, `title`, `bundle`, `logo` and `navbarBackground`.
+`navbarBackground` is the color the tests expect `.navbar` to compute to, for example `"rgb(246, 247, 249)"`.
+. Run `BRAND=<name> npx playwright test` and `npx gulp bundle --brand=<name>`.
+
+The CI matrix reads `brands.json` with `jq`, so there is no workflow to edit.
+The workflow validates brand names before they reach a shell.
+
+== The tests that keep this working
+
+`test/brand-free.spec.js` fails if anything under `src/` names a brand, in its contents or in its file name.
+It also asserts that all four brands declare the same set of color slots, and that this set matches what `src/` reads but never declares.
+That test is the whole consolidation: it fails the day someone adds a VSHN link to a shared partial, which is how the four forks came about.
+
+`test/brand.spec.js` checks, for the selected brand, that the logo is served, that the navbar's computed color matches `navbarBackground` in `brands.json`, that every referenced favicon exists, and that every declared `sizes="NxN"` matches the PNG's real pixel dimensions.
+
+`test/bundle.spec.js` fails if one brand's images appear in another brand's zip.
