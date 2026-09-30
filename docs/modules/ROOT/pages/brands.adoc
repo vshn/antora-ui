@@ -53,6 +53,31 @@ The bundle tests fail rather than skip when the zip is missing, hence the order.
 The CI matrix reads `brands.json` with `jq`, so there is no workflow to edit.
 The workflow validates brand names before they reach a shell.
 
+== Advertising a site as a search engine
+
+A site can offer its search to the browser's address bar through OpenSearch.
+The UI generates the descriptor, so no site hardcodes its domain.
+A site needs two things.
+
+. In the playbook, under `site.keys`, set `opensearch: true` and `searchPagePath`, the path of the search page relative to the site root, for example `user/search.html`.
+The UI adds the discovery link to every page only when `site.url`, `opensearch` and `searchPagePath` are all set, so a misconfigured site advertises nothing.
+. Add a page with these two lines:
++
+[source,asciidoc]
+----
+= OpenSearch
+:page-layout: opensearch
+----
+
+Antora renders that page through `src/layouts/opensearch.hbs`, which writes an OpenSearch descriptor instead of HTML.
+The descriptor is built from the site's own `site.url`, `site.title` and `searchPagePath`.
+It cannot be a static file in the UI, because Antora copies static files verbatim and OpenSearch needs absolute URLs.
+The nginx image serves the generated page at `/opensearchdescription.xml` with the content type `application/opensearchdescription+xml`.
+
+The OpenSearch specification limits `ShortName` to 16 characters, and the layout does not truncate it.
+It uses `site.title`, so a longer title needs the optional key `opensearchShortName` under `site.keys`.
+`Description` always uses `site.title`.
+
 == Looking at a brand
 
 The tests check computed colors, which does not tell you whether a page looks right.
