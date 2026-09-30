@@ -1,18 +1,18 @@
 = Set up a UI Project
-:url-project: https://gitlab.com/antora/antora-ui-default.git
+:url-project: https://github.com/vshn/antora-ui.git
 
 Before you can start working on the UI, you need to grab the sources and initialize the project.
-The sources can be {url-project}[Antora's default UI] or an existing UI project structured to work with Antora.
+The sources can be {url-project}[the VSHN Antora UI] or an existing UI project structured to work with Antora.
 
-== Fetch the Default UI project
+== Fetch the UI project
 
-To start, clone the default UI project using git:
+To start, clone the UI project using git:
 
 [subs=attributes+]
  $ git clone {url-project} &&
    cd "`basename ${_%.git}`"
 
-The example above clones Antora's default UI project and then switches to the project folder on your filesystem.
+The example above clones the VSHN Antora UI project and then switches to the project folder on your filesystem.
 Stay in this project folder in order to initialize the project using npm.
 
 == Install dependencies

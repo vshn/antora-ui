@@ -1,10 +1,10 @@
-= Antora Default UI
+= Antora UI
 // Settings:
 :hide-uri-scheme:
 // URLs:
 :url-antora: https://antora.org
-:url-repo: https://gitlab.com/antora/antora-ui-default
-:url-preview: https://antora.gitlab.io/antora-ui-default
+:url-repo: https://github.com/vshn/antora-ui
+:url-preview: https://github.com/vshn/antora-ui/releases
 :url-hbs: https://handlebarsjs.com
 :url-gulp: https://gulpjs.com
 :url-npm: https://npmjs.com
@@ -14,7 +14,7 @@
 :url-git: https://git-scm.com
 :url-git-dl: {url-git}/downloads
 
-This project produces the {url-preview}[default UI bundle] for documentation sites generated with {url-antora}[Antora].
+This project produces the {url-preview}[UI bundles] for VSHN, APPUiO, K8up and Project Syn documentation sites generated with {url-antora}[Antora].
 It contains the UI assets (page templates, CSS, JavaScript, images, etc.) and a Gulp build script.
 The build can be used to preview the UI locally (featuring live updates), or to package it for consumption by the Antora site generator.
 
