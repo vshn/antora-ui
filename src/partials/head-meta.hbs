@@ -4,3 +4,6 @@
     <meta name="twitter:card" content="summary_large_image">
     {{> brand-meta }}
     <meta property="og:locale" content="en_US" />
+{{#if (and site.url site.keys.opensearch site.keys.searchPagePath)}}
+    <link rel="search" type="application/opensearchdescription+xml" title="{{site.title}}" href="{{url-join site.url 'opensearchdescription.xml'}}">
+{{/if}}
