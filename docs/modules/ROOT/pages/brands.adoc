@@ -59,8 +59,10 @@ A site can offer its search to the browser's address bar through OpenSearch.
 The UI generates the descriptor, so no site hardcodes its domain.
 A site needs two things.
 
-. In the playbook, under `site.keys`, set `opensearch: true` and `searchPagePath`, the path of the search page relative to the site root, for example `user/search.html`.
-The UI adds the discovery link to every page only when `site.url`, `opensearch` and `searchPagePath` are all set, so a misconfigured site advertises nothing.
+. In the playbook, under `site.keys`, set `opensearch: true` and `search_page_path`, the path of the search page relative to the site root, for example `user/search.html`.
+Antora camelizes these names, so a playbook writes `search_page_path` and the UI reads `searchPagePath`, the same way `plausible_script` becomes `plausibleScript`.
+Writing the camel case form in the playbook silently yields nothing.
+The UI adds the discovery link to every page only when `site.url`, `opensearch` and `search_page_path` are all set, so a misconfigured site advertises nothing.
 . Add a page with these two lines:
 +
 [source,asciidoc]
@@ -70,13 +72,25 @@ The UI adds the discovery link to every page only when `site.url`, `opensearch` 
 ----
 
 Antora renders that page through `src/layouts/opensearch.hbs`, which writes an OpenSearch descriptor instead of HTML.
-The descriptor is built from the site's own `site.url`, `site.title` and `searchPagePath`.
+The descriptor is built from the site's own `site.url`, `site.title` and `search_page_path`.
 It cannot be a static file in the UI, because Antora copies static files verbatim and OpenSearch needs absolute URLs.
-The nginx image serves the generated page at `/opensearchdescription.xml` with the content type `application/opensearchdescription+xml`.
+Antora publishes that page under its component path, not at the site root: a component named `docs` produces `/docs/opensearch.html`.
+Verified by building a site in `ghcr.io/vshn/antora:3.1.14`.
+Browsers want the descriptor served as `application/opensearchdescription+xml`, so each site maps its own path in the nginx configuration it already ships:
+
+[source,nginx]
+----
+location = /opensearchdescription.xml {
+    default_type application/opensearchdescription+xml;
+    alias /usr/share/nginx/html/docs/opensearch.html;
+}
+----
+
+The base image cannot do this for every site, because only the site knows which component and version its page lands under.
 
 The OpenSearch specification limits `ShortName` to 16 characters, and the layout does not truncate it, because a name that is wrong is better noticed than hidden.
 It falls back to `site.title`, which in practice is always too long: the real titles of these sites run from 31 characters ("APPUiO Cloud User Documentation") to 45 ("K8up Kubernetes Backup Operator Documentation").
-So set `opensearchShortName` under `site.keys` as a matter of course, for example `K8up Docs`.
+So set `opensearch_short_name` under `site.keys` as a matter of course, for example `K8up Docs`.
 `Description` always uses `site.title`, which has no such limit.
 
 == Looking at a brand
